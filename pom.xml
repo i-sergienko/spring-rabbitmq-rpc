@@ -11,7 +11,7 @@
 
     <groupId>org.bakeneko</groupId>
     <artifactId>spring-boot-starter-rabbitmq-rpc</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
     <name>spring-boot-starter-rabbitmq-rpc</name>
     <description>A library for automatic generation of RabbitMQ RPC clients</description>
 
