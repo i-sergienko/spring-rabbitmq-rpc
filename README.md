@@ -1,7 +1,7 @@
-##About
+## About
 A Spring Boot Starter module for automatic RabbitMQ client generation from interfaces.
 
-##Usage
+## Usage
 Import the project as a dependency:
 ```
 <dependency>
