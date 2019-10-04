@@ -1,0 +1,7 @@
+${Ansi.RED}__________       ___.  ___.   .__  __     _____   ________    ${Ansi.BRIGHT_CYAN}   ___ _____________________________   ___
+${Ansi.RED}\______   \_____ \_ |__\_ |__ |__|/  |_  /     \  \_____  \   ${Ansi.BRIGHT_CYAN}  /  / \______   \______   \_   ___ \  \  \
+${Ansi.RED} |       _/\__  \ | __ \| __ \|  \   __\/  \ /  \  /  / \  \  ${Ansi.BRIGHT_CYAN} /  /   |       _/|     ___/    \  \/   \  \
+${Ansi.RED} |    |   \ / __ \| \_\ \ \_\ \  ||  | /    Y    \/   \_/.  \ ${Ansi.BRIGHT_CYAN}(  (    |    |   \|    |   \     \____   )  )
+${Ansi.RED} |____|_  /(____  /___  /___  /__||__| \____|__  /\_____\ \_/ ${Ansi.BRIGHT_CYAN} \  \   |____|_  /|____|    \______  /  /  /
+${Ansi.RED}        \/      \/    \/    \/                 \/        \__> ${Ansi.BRIGHT_CYAN}  \__\         \/                  \/  /__/
+${Ansi.RED} :: Spring Boot${spring-boot.formatted-version} :: ${Ansi.DEFAULT}

@@ -1,0 +1,7 @@
+rpc-test:
+  queue:
+    payload-and-header: payload_and_header
+    payload-only: payload_only
+    asynchronous: asynch
+    custom-payload-and-header: custom_payload_and_header
+    custom-payload-only: custom_payload_only
