@@ -18,7 +18,7 @@ package org.bakeneko.rabbitmq.rpc.factory;
 
 import org.bakeneko.rabbitmq.rpc.RabbitClient;
 import org.bakeneko.rabbitmq.rpc.RabbitSender;
-import i.sergienko.rpc.test.model.TestRequest;
+import org.bakeneko.rpc.test.model.TestRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

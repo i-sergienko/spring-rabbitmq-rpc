@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package i.sergienko.rpc.test;
+package org.bakeneko.rpc.test;
 
 import com.rabbitmq.client.Channel;
 import org.bakeneko.rabbitmq.rpc.EnableRabbitRPC;

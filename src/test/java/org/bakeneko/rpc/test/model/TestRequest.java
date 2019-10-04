@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package i.sergienko.rpc.test.model;
+package org.bakeneko.rpc.test.model;
 
 import java.util.Objects;
 

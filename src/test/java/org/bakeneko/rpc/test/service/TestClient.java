@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package i.sergienko.rpc.test.service;
+package org.bakeneko.rpc.test.service;
 
 import org.bakeneko.rabbitmq.rpc.RabbitClient;
 import org.bakeneko.rabbitmq.rpc.RabbitSender;
-import i.sergienko.rpc.test.model.TestRequest;
-import i.sergienko.rpc.test.model.TestResponse;
+import org.bakeneko.rpc.test.model.TestRequest;
+import org.bakeneko.rpc.test.model.TestResponse;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 
-import static i.sergienko.rpc.test.TestConfiguration.*;
+import static org.bakeneko.rpc.test.TestConfiguration.*;
 
 /**
  * @author Ivan Sergienko

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package i.sergienko.rpc.test;
+package org.bakeneko.rpc.test;
 
-import i.sergienko.rpc.test.model.TestRequest;
-import i.sergienko.rpc.test.model.TestResponse;
+import org.bakeneko.rpc.test.model.TestRequest;
+import org.bakeneko.rpc.test.model.TestResponse;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
-import static i.sergienko.rpc.test.TestConfiguration.TEST_HEADER_NAME;
-import static i.sergienko.rpc.test.TestConfiguration.TEST_HEADER_VALUE;
+import static org.bakeneko.rpc.test.TestConfiguration.TEST_HEADER_NAME;
+import static org.bakeneko.rpc.test.TestConfiguration.TEST_HEADER_VALUE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

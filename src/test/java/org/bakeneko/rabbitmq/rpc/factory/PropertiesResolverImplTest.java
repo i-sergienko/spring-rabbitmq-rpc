@@ -16,7 +16,7 @@
 
 package org.bakeneko.rabbitmq.rpc.factory;
 
-import i.sergienko.rpc.test.TestConfiguration;
+import org.bakeneko.rpc.test.TestConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
