@@ -12,7 +12,7 @@
     <groupId>org.bakeneko</groupId>
     <artifactId>spring-boot-starter-rabbitmq-rpc</artifactId>
     <version>0.0.2</version>
-    <name>spring-boot-starter-rabbitmq-rpc</name>
+    <name>Spring Boot RabbitMQ RPC</name>
     <description>A library for automatic generation of RabbitMQ RPC clients</description>
 
     <licenses>
@@ -25,8 +25,15 @@
         <developer>
             <name>Ivan Sergienko</name>
             <email>ivansergienko3211@protonmail.com</email>
+            <url>https://github.com/i-sergienko</url>
         </developer>
     </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/i-sergienko/spring-rabbitmq-rpc.git</connection>
+        <developerConnection>scm:git:ssh://github.com:i-sergienko/spring-rabbitmq-rpc.git</developerConnection>
+        <url>https://github.com/i-sergienko/spring-rabbitmq-rpc/tree/master</url>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
