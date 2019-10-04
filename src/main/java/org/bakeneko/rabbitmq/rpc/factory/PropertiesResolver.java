@@ -25,7 +25,7 @@ public interface PropertiesResolver {
 
     /**
      * If the {@code value} passed is a  property placeholder, the method retrieves a value associated with it from Spring context.
-     * Otherwise the {@value} passed is returned as is.
+     * Otherwise the {@code value} passed is returned as is.
      *
      * @param value the placeholder (or value) to be resolved
      * @return the value associated with the placeholder, or the {@code value} itself, if it's not a placeholder

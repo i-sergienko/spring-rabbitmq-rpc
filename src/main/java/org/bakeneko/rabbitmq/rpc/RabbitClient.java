@@ -16,8 +16,6 @@
 
 package org.bakeneko.rabbitmq.rpc;
 
-import org.springframework.amqp.core.MessagePostProcessor;
-import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
@@ -36,9 +34,10 @@ import java.lang.annotation.*;
 public @interface RabbitClient {
 
     /**
-     * The name of the {@link Exchange} to used instead of the default one.
+     * The name of the {@link  org.springframework.amqp.rabbit.annotation.Exchange} to used instead of the default one.
      * If also defined in {@link RabbitSender#exchange()}, the latter one takes precedence.
      *
+     * @return the exchange to use while sending messages through RabbitMQ
      * @see RabbitSender#exchange()
      */
     String exchange() default "";
@@ -47,15 +46,17 @@ public @interface RabbitClient {
      * The routing key used when sending messages.
      * If also defined in {@link RabbitSender#routingKey()}, the latter one takes precedence.
      *
+     * @return the routing key to use while sending messages through RabbitMQ
      * @see RabbitSender#routingKey()
      */
     String routingKey() default "";
 
     /**
-     * The bean name of the custom {@link MessagePostProcessor}
+     * The bean name of the custom {@link org.springframework.amqp.core.MessagePostProcessor}
      * to use.
      * If also defined in {@link RabbitSender#messagePostProcessor()}, the latter one takes precedence.
      *
+     * @return the bean name of a {@link org.springframework.amqp.core.MessagePostProcessor} to use before sending messages
      * @see RabbitSender#messagePostProcessor()
      */
     String messagePostProcessor() default "";

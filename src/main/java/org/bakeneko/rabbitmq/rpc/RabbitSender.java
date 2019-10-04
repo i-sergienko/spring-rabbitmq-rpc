@@ -16,9 +16,6 @@
 
 package org.bakeneko.rabbitmq.rpc;
 
-import org.springframework.amqp.core.MessagePostProcessor;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-
 import java.lang.annotation.*;
 
 /**
@@ -33,25 +30,28 @@ import java.lang.annotation.*;
 @Documented
 public @interface RabbitSender {
     /**
-     * Specifies the exchange for {@link RabbitTemplate} to send the messages to.
+     * Specifies the exchange for {@link org.springframework.amqp.rabbit.core.RabbitTemplate} to send the messages to.
      * If not specified, the default exchange is used.
      *
+     * @return the exchange to use while sending messages through RabbitMQ. Overrides the one defined in {@link RabbitClient#exchange()} (if any)
      * @see RabbitClient#exchange()
      */
     String exchange() default "";
 
     /**
-     * Specifies the routing key for {@link RabbitTemplate} to send the messages to.
+     * Specifies the routing key for {@link org.springframework.amqp.rabbit.core.RabbitTemplate} to send the messages to.
      * If not specified, the default routing key is used.
      *
+     * @return the routing key to use while sending messages through RabbitMQ. Overrides the one defined in {@link RabbitClient#routingKey()} (if any)
      * @see RabbitClient#routingKey()
      */
     String routingKey() default "";
 
     /**
-     * The bean name of the custom {@link MessagePostProcessor}
+     * The bean name of the custom {@link org.springframework.amqp.core.MessagePostProcessor}
      * to use.
      *
+     * @return the bean name of a {@link org.springframework.amqp.core.MessagePostProcessor} to use before sending messages. Overrides the one defined in {@link RabbitClient#messagePostProcessor()} (if any)
      * @see RabbitClient#messagePostProcessor()
      */
     String messagePostProcessor() default "";
