@@ -39,6 +39,14 @@ public @interface RabbitSender {
     String exchange() default "";
 
     /**
+     * The bean name of the custom {@link org.bakeneko.rabbitmq.rpc.generator.ExchangeGenerator} to use.
+     * <p>Mutually exclusive with the {@link #exchange} attribute.
+     *
+     * @see RabbitClient#exchangeGenerator
+     */
+    String exchangeGenerator() default "";
+
+    /**
      * Specifies the routing key for {@link org.springframework.amqp.rabbit.core.RabbitTemplate} to send the messages to.
      * If not specified, the default routing key is used.
      *
@@ -46,6 +54,14 @@ public @interface RabbitSender {
      * @see RabbitClient#routingKey()
      */
     String routingKey() default "";
+
+    /**
+     * The bean name of the custom {@link org.bakeneko.rabbitmq.rpc.generator.RoutingKeyGenerator} to use.
+     * <p>Mutually exclusive with the {@link #routingKey} attribute.
+     *
+     * @see RabbitClient#routingKeyGenerator
+     */
+    String routingKeyGenerator() default "";
 
     /**
      * The bean name of the custom {@link org.springframework.amqp.core.MessagePostProcessor}
