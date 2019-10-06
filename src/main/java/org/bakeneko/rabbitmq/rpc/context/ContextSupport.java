@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package org.bakeneko.rabbitmq.rpc.factory;
+package org.bakeneko.rabbitmq.rpc.context;
 
 /**
- * Property placeholder resolution utility class.
+ * Utility for retrieval of Spring beans by name and type programmatically.
  *
  * @author Ivan Sergienko
  */
-public interface PropertiesResolver {
+@FunctionalInterface
+public interface ContextSupport {
 
     /**
-     * If the {@code value} passed is a  property placeholder, the method retrieves a value associated with it from Spring context.
-     * Otherwise the {@code value} passed is returned as is.
+     * Retrieves a required bean with specified {@code name} and {@code type} from Spring context.
      *
-     * @param value the placeholder (or value) to be resolved
-     * @return the value associated with the placeholder, or the {@code value} itself, if it's not a placeholder
+     * @param name name of the bean to be retrieved.
+     * @param type type of the bean to be retrieved
+     * @param <T>  generic type parameter of the bean to be retrieved.
+     * @return a Spring bean with the specified name and type.
+     * @see org.springframework.context.ApplicationContext#getBean(String, Class)
      */
-    String replaceIfProperty(String value);
+    <T> T getBean(String name, Class<T> type);
 }

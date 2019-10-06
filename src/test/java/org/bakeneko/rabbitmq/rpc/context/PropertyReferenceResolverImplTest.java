@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.bakeneko.rabbitmq.rpc.factory;
+package org.bakeneko.rabbitmq.rpc.context;
 
 import org.bakeneko.rpc.test.TestConfiguration;
 import org.junit.Test;
@@ -30,14 +30,14 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfiguration.class)
-public class PropertiesResolverImplTest {
+public class PropertyReferenceResolverImplTest {
     @Autowired
-    private PropertiesResolver propertiesResolver;
+    private PropertyReferenceResolver propertyReferenceResolver;
 
     @Test
     public void shouldReturnValueIfNotReference() {
         String value = "not_a_reference";
-        String resolved = propertiesResolver.replaceIfProperty(value);
+        String resolved = propertyReferenceResolver.replaceIfProperty(value);
 
         assertEquals(value, resolved);
     }
@@ -45,7 +45,7 @@ public class PropertiesResolverImplTest {
     @Test
     public void shouldReturnPropertyIfReference() {
         String reference = "${rpc-test.queue.payload-and-header}";
-        String resolved = propertiesResolver.replaceIfProperty(reference);
+        String resolved = propertyReferenceResolver.replaceIfProperty(reference);
 
         assertEquals("payload_and_header", resolved);
     }
@@ -53,6 +53,6 @@ public class PropertiesResolverImplTest {
     @Test(expected = IllegalStateException.class)
     public void shouldThrowExceptionIfMissingReference() {
         String reference = "${missing.property}";
-        propertiesResolver.replaceIfProperty(reference);
+        propertyReferenceResolver.replaceIfProperty(reference);
     }
 }

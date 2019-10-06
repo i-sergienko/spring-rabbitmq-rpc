@@ -18,6 +18,8 @@ package org.bakeneko.rabbitmq.rpc.factory;
 
 import org.bakeneko.rabbitmq.rpc.RabbitClient;
 import org.bakeneko.rabbitmq.rpc.RabbitSender;
+import org.bakeneko.rabbitmq.rpc.context.ContextSupport;
+import org.bakeneko.rabbitmq.rpc.context.PropertyReferenceResolver;
 import org.bakeneko.rabbitmq.rpc.generator.ExchangeGenerator;
 import org.bakeneko.rabbitmq.rpc.generator.RoutingKeyGenerator;
 import org.springframework.amqp.core.MessagePostProcessor;
@@ -39,14 +41,14 @@ import static java.util.stream.Collectors.toMap;
  * @author Ivan Sergienko
  */
 public class RabbitClientAnnotationProcessorImpl implements RabbitClientAnnotationProcessor {
-    private PropertiesResolver propertiesResolver;
+    private PropertyReferenceResolver propertyReferenceResolver;
     private ContextSupport contextSupport;
 
     public RabbitClientAnnotationProcessorImpl(
-            PropertiesResolver propertiesResolver,
+            PropertyReferenceResolver propertyReferenceResolver,
             ContextSupport contextSupport
     ) {
-        this.propertiesResolver = propertiesResolver;
+        this.propertyReferenceResolver = propertyReferenceResolver;
         this.contextSupport = contextSupport;
     }
 
@@ -204,7 +206,7 @@ public class RabbitClientAnnotationProcessorImpl implements RabbitClientAnnotati
         if (!exchange.isEmpty() && !exchangeGenerator.isEmpty()) {
             throw new IllegalStateException("Both 'exchange' and 'exchangeGenerator' specified in @RabbitClient, although they are mutually exclusive.");
         } else if (!exchange.isEmpty()) {
-            String hardCodedExchange = propertiesResolver.replaceIfProperty(exchange);
+            String hardCodedExchange = propertyReferenceResolver.replaceIfProperty(exchange);
 
             return (target, method, params) -> hardCodedExchange;
         } else if (!exchangeGenerator.isEmpty()) {
@@ -226,7 +228,7 @@ public class RabbitClientAnnotationProcessorImpl implements RabbitClientAnnotati
         if (!routingKey.isEmpty() && !routingKeyGenerator.isEmpty()) {
             throw new IllegalStateException("Both 'routingKey' and 'routingKeyGenerator' specified in @RabbitClient, although they are mutually exclusive.");
         } else if (!routingKey.isEmpty()) {
-            String hardCodedRoutingKey = propertiesResolver.replaceIfProperty(routingKey);
+            String hardCodedRoutingKey = propertyReferenceResolver.replaceIfProperty(routingKey);
 
             return (target, method, params) -> hardCodedRoutingKey;
         } else if (!routingKeyGenerator.isEmpty()) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.bakeneko.rabbitmq.rpc.factory;
+package org.bakeneko.rabbitmq.rpc.context;
 
 import org.springframework.core.env.Environment;
 import org.springframework.util.PropertyPlaceholderHelper;
@@ -24,13 +24,13 @@ import java.util.regex.Pattern;
 /**
  * @author Ivan Sergienko
  */
-public class PropertiesResolverImpl implements PropertiesResolver {
+public class PropertyReferenceResolverImpl implements PropertyReferenceResolver {
     private Environment environment;
 
     private PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper("${", "}", ":", true);
     private Pattern propertyReferencePattern = Pattern.compile("^\\$\\{.*}$");
 
-    public PropertiesResolverImpl(Environment environment) {
+    public PropertyReferenceResolverImpl(Environment environment) {
         this.environment = environment;
     }
 
