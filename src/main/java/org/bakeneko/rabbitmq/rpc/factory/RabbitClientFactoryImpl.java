@@ -65,8 +65,8 @@ public class RabbitClientFactoryImpl implements RabbitClientFactory {
     private InvocationHandler invocationHandler(Map<String, RabbitClientMetadata> metadataByMethod) {
         return (proxy, method, args) -> {
             RabbitClientMetadata metadata = metadataByMethod.get(methodNameSignatureAware(method));
-            String exchange = metadata.getExchange();
-            String routingKey = metadata.getRoutingKey();
+            String exchange = metadata.getExchangeGenerator().generate(proxy, method, args);
+            String routingKey = metadata.getRoutingKeyGenerator().generate(proxy, method, args);
             MessagePostProcessor postProcessor = headerAppendingPostProcessorWrapper(metadata.getHeaders(args), metadata.getMessagePostProcessor());
 
             if ("void".equals(method.getAnnotatedReturnType().getType().getTypeName())) {

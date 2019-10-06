@@ -18,6 +18,8 @@ package org.bakeneko.rabbitmq.rpc.factory;
 
 import org.bakeneko.rabbitmq.rpc.RabbitClient;
 import org.bakeneko.rabbitmq.rpc.RabbitSender;
+import org.bakeneko.rabbitmq.rpc.generator.ExchangeGenerator;
+import org.bakeneko.rabbitmq.rpc.generator.RoutingKeyGenerator;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Headers;
@@ -38,24 +40,23 @@ import static java.util.stream.Collectors.toMap;
  */
 public class RabbitClientAnnotationProcessorImpl implements RabbitClientAnnotationProcessor {
     private PropertiesResolver propertiesResolver;
-    private Map<String, MessagePostProcessor> postProcessors;
+    private ContextSupport contextSupport;
 
     public RabbitClientAnnotationProcessorImpl(
             PropertiesResolver propertiesResolver,
-            Map<String, MessagePostProcessor> postProcessors
+            ContextSupport contextSupport
     ) {
         this.propertiesResolver = propertiesResolver;
-        this.postProcessors = postProcessors;
+        this.contextSupport = contextSupport;
     }
 
     @Override
     public Map<String, RabbitClientMetadata> readMetadata(Class<?> toImplement) {
         if (toImplement.isAnnotationPresent(RabbitClient.class)) {
             RabbitClient rabbitClient = toImplement.getAnnotation(RabbitClient.class);
-            String defaultExchange = !rabbitClient.exchange().isEmpty() ? rabbitClient.exchange() : null;
-            String defaultRoutingKey = !rabbitClient.routingKey().isEmpty() ? rabbitClient.routingKey() : null;
-            MessagePostProcessor defaultMessagePostProcessor = !rabbitClient.messagePostProcessor().isEmpty() ?
-                    getMessagePostProcessor(rabbitClient.messagePostProcessor()) : null;
+            ExchangeGenerator defaultExchangeGenerator = getExchangeGenerator(rabbitClient);
+            RoutingKeyGenerator defaultRoutingKeyGenerator = getRoutingKeyGenerator(rabbitClient);
+            MessagePostProcessor defaultMessagePostProcessor = getMessagePostProcessor(rabbitClient.messagePostProcessor());
 
             Map<String, Method> methodsByName = Stream.of(toImplement.getDeclaredMethods())
                     .collect(toMap(ReflectionUtils::methodNameSignatureAware, m -> m));
@@ -71,24 +72,22 @@ public class RabbitClientAnnotationProcessorImpl implements RabbitClientAnnotati
                         if (method.isAnnotationPresent(RabbitSender.class)) {
                             RabbitSender rabbitSender = method.getAnnotation(RabbitSender.class);
 
-                            String exchange = !rabbitSender.exchange().isEmpty() ? rabbitSender.exchange() : defaultExchange;
-                            String routingKey = !rabbitSender.routingKey().isEmpty() ? rabbitSender.routingKey() : defaultRoutingKey;
-                            MessagePostProcessor messagePostProcessor = !rabbitSender.messagePostProcessor().isEmpty() ?
-                                    getMessagePostProcessor(rabbitSender.messagePostProcessor()) : defaultMessagePostProcessor;
-
+                            ExchangeGenerator exchangeGenerator = getExchangeGenerator(rabbitSender);
+                            RoutingKeyGenerator routingKeyGenerator = getRoutingKeyGenerator(rabbitSender);
+                            MessagePostProcessor messagePostProcessor = getMessagePostProcessor(rabbitSender.messagePostProcessor());
 
                             return new RabbitClientMetadata(
-                                    propertiesResolver.replaceIfProperty(exchange),
-                                    propertiesResolver.replaceIfProperty(routingKey),
-                                    messagePostProcessor,
+                                    exchangeGenerator != null ? exchangeGenerator : defaultExchangeGenerator,
+                                    routingKeyGenerator != null ? routingKeyGenerator : defaultRoutingKeyGenerator,
+                                    messagePostProcessor != null ? messagePostProcessor : defaultMessagePostProcessor,
                                     payloadParameterIndex,
                                     headerMapParameterIndex,
                                     headerParameterIndexByName
                             );
                         } else {
                             return new RabbitClientMetadata(
-                                    propertiesResolver.replaceIfProperty(defaultExchange),
-                                    propertiesResolver.replaceIfProperty(defaultRoutingKey),
+                                    defaultExchangeGenerator,
+                                    defaultRoutingKeyGenerator,
                                     defaultMessagePostProcessor,
                                     payloadParameterIndex,
                                     headerMapParameterIndex,
@@ -186,15 +185,62 @@ public class RabbitClientAnnotationProcessorImpl implements RabbitClientAnnotati
     }
 
     private MessagePostProcessor getMessagePostProcessor(String beanName) {
-        if (postProcessors.containsKey(beanName)) {
-            return postProcessors.get(beanName);
+        if (!beanName.isEmpty()) {
+            return getRequiredBean(beanName, MessagePostProcessor.class);
         } else {
-            throw postProcessorNotFoundException(beanName);
+            return null;
         }
     }
 
-    private IllegalStateException postProcessorNotFoundException(String postProcessorName) {
-        return new IllegalStateException("No message post processor bean found with name \"" +
-                postProcessorName + "\", although it is required by a @RabbitClient");
+    private ExchangeGenerator getExchangeGenerator(RabbitClient rabbitClient) {
+        return getExchangeGenerator(rabbitClient.exchange(), rabbitClient.exchangeGenerator());
+    }
+
+    private ExchangeGenerator getExchangeGenerator(RabbitSender rabbitSender) {
+        return getExchangeGenerator(rabbitSender.exchange(), rabbitSender.exchangeGenerator());
+    }
+
+    private ExchangeGenerator getExchangeGenerator(String exchange, String exchangeGenerator) {
+        if (!exchange.isEmpty() && !exchangeGenerator.isEmpty()) {
+            throw new IllegalStateException("Both 'exchange' and 'exchangeGenerator' specified in @RabbitClient, although they are mutually exclusive.");
+        } else if (!exchange.isEmpty()) {
+            String hardCodedExchange = propertiesResolver.replaceIfProperty(exchange);
+
+            return (target, method, params) -> hardCodedExchange;
+        } else if (!exchangeGenerator.isEmpty()) {
+            return getRequiredBean(exchangeGenerator, ExchangeGenerator.class);
+        } else {
+            return null;
+        }
+    }
+
+    private RoutingKeyGenerator getRoutingKeyGenerator(RabbitClient rabbitClient) {
+        return getRoutingKeyGenerator(rabbitClient.routingKey(), rabbitClient.routingKeyGenerator());
+    }
+
+    private RoutingKeyGenerator getRoutingKeyGenerator(RabbitSender rabbitSender) {
+        return getRoutingKeyGenerator(rabbitSender.routingKey(), rabbitSender.routingKeyGenerator());
+    }
+
+    private RoutingKeyGenerator getRoutingKeyGenerator(String routingKey, String routingKeyGenerator) {
+        if (!routingKey.isEmpty() && !routingKeyGenerator.isEmpty()) {
+            throw new IllegalStateException("Both 'routingKey' and 'routingKeyGenerator' specified in @RabbitClient, although they are mutually exclusive.");
+        } else if (!routingKey.isEmpty()) {
+            String hardCodedRoutingKey = propertiesResolver.replaceIfProperty(routingKey);
+
+            return (target, method, params) -> hardCodedRoutingKey;
+        } else if (!routingKeyGenerator.isEmpty()) {
+            return getRequiredBean(routingKeyGenerator, RoutingKeyGenerator.class);
+        } else {
+            return null;
+        }
+    }
+
+    private <T> T getRequiredBean(String beanName, Class<T> beanType) {
+        try {
+            return contextSupport.getBean(beanName, beanType);
+        } catch (Exception e) {
+            throw new IllegalStateException("Required bean with name \"" + beanName + "\" could not be found, although it is required by a @RabbitClient", e);
+        }
     }
 }

@@ -17,6 +17,8 @@
 package org.bakeneko.rabbitmq.rpc.factory;
 
 import org.bakeneko.rabbitmq.rpc.RabbitClient;
+import org.bakeneko.rabbitmq.rpc.generator.ExchangeGenerator;
+import org.bakeneko.rabbitmq.rpc.generator.RoutingKeyGenerator;
 import org.springframework.amqp.core.MessagePostProcessor;
 
 import java.util.HashMap;
@@ -30,35 +32,35 @@ import java.util.stream.Collectors;
  * @author Ivan Sergienko
  */
 public class RabbitClientMetadata {
-    private final String exchange;
-    private final String routingKey;
+    private final ExchangeGenerator exchangeGenerator;
+    private final RoutingKeyGenerator routingKeyGenerator;
     private final MessagePostProcessor messagePostProcessor;
     private final Integer payloadParameterIndex;
     private final Integer headerMapParameterIndex;
     private final Map<String, Integer> headerParameterIndexByName;
 
     public RabbitClientMetadata(
-            String exchange,
-            String routingKey,
+            ExchangeGenerator exchangeGenerator,
+            RoutingKeyGenerator routingKeyGenerator,
             MessagePostProcessor messagePostProcessor,
             Integer payloadParameterIndex,
             Integer headerMapParameterIndex,
             Map<String, Integer> headerParameterIndexByName
     ) {
-        this.exchange = exchange;
-        this.routingKey = routingKey;
+        this.exchangeGenerator = exchangeGenerator != null ? exchangeGenerator : (target, method, params) -> null;
+        this.routingKeyGenerator = routingKeyGenerator != null ? routingKeyGenerator : (target, method, params) -> null;
         this.messagePostProcessor = messagePostProcessor != null ? messagePostProcessor : message -> message;
         this.payloadParameterIndex = payloadParameterIndex;
         this.headerMapParameterIndex = headerMapParameterIndex;
         this.headerParameterIndexByName = headerParameterIndexByName;
     }
 
-    public String getExchange() {
-        return exchange;
+    public ExchangeGenerator getExchangeGenerator() {
+        return exchangeGenerator;
     }
 
-    public String getRoutingKey() {
-        return routingKey;
+    public RoutingKeyGenerator getRoutingKeyGenerator() {
+        return routingKeyGenerator;
     }
 
     public MessagePostProcessor getMessagePostProcessor() {

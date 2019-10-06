@@ -16,6 +16,7 @@
 
 package org.bakeneko.rabbitmq.rpc;
 
+import org.bakeneko.rabbitmq.rpc.factory.ContextSupportImpl;
 import org.bakeneko.rabbitmq.rpc.factory.PropertiesResolverImpl;
 import org.bakeneko.rabbitmq.rpc.factory.RabbitClientAnnotationProcessorImpl;
 import org.bakeneko.rabbitmq.rpc.factory.RabbitClientFactoryImpl;
@@ -52,6 +53,7 @@ public class RabbitClientRegistrar implements ImportBeanDefinitionRegistrar, Res
     private ResourceLoader resourceLoader;
 
     private static final String PROPERTIES_RESOLVER_BEAN_NAME = PropertiesResolverImpl.class.getName();
+    private static final String CONTEXT_SUPPORT_BEAN_NAME = ContextSupportImpl.class.getName();
     private static final String ANNOTATION_PROCESSOR_BEAN_NAME = RabbitClientAnnotationProcessorImpl.class.getName();
     private static final String CLIENT_FACTORY_BEAN_NAME = RabbitClientFactoryImpl.class.getName();
 
@@ -75,6 +77,7 @@ public class RabbitClientRegistrar implements ImportBeanDefinitionRegistrar, Res
         Assert.notNull(this.resourceLoader, "ResourceLoader must not be null!");
         if (annotationMetadata.getAnnotationAttributes(EnableRabbitRPC.class.getName()) != null) {
             registerDefinitionIfMissing(PROPERTIES_RESOLVER_BEAN_NAME, PropertiesResolverImpl.class, registry);
+            registerDefinitionIfMissing(CONTEXT_SUPPORT_BEAN_NAME, ContextSupportImpl.class, registry);
             registerDefinitionIfMissing(ANNOTATION_PROCESSOR_BEAN_NAME, RabbitClientAnnotationProcessorImpl.class, registry);
             registerDefinitionIfMissing(CLIENT_FACTORY_BEAN_NAME, RabbitClientFactoryImpl.class, registry);
 

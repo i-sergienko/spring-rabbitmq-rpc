@@ -22,6 +22,7 @@ import org.bakeneko.rpc.test.model.TestRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.messaging.handler.annotation.Header;
@@ -29,11 +30,11 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.Mockito.doReturn;
 
 /**
  * @author Ivan Sergienko
@@ -52,12 +53,14 @@ public class RabbitClientAnnotationProcessorImplTest {
 
     private RabbitClientAnnotationProcessor annotationProcessor;
 
+    @Mock
+    private ContextSupport contextSupport;
+
     @Before
     public void init() {
-        Map<String, MessagePostProcessor> postProcessors = new HashMap<>();
-        postProcessors.put(IDENTITY_POST_PROCESSOR_BEAN_NAME, IDENTITY_MESSAGE_POST_PROCESSOR);
-        postProcessors.put(ANOTHER_POST_PROCESSOR_BEAN_NAME, ANOTHER_MESSAGE_POST_PROCESSOR);
-        annotationProcessor = new RabbitClientAnnotationProcessorImpl(value -> value, postProcessors);
+        doReturn(IDENTITY_MESSAGE_POST_PROCESSOR).when(contextSupport).getBean(IDENTITY_POST_PROCESSOR_BEAN_NAME, MessagePostProcessor.class);
+        doReturn(ANOTHER_MESSAGE_POST_PROCESSOR).when(contextSupport).getBean(ANOTHER_POST_PROCESSOR_BEAN_NAME, MessagePostProcessor.class);
+        annotationProcessor = new RabbitClientAnnotationProcessorImpl(value -> value, contextSupport);
     }
 
     @Test
@@ -66,22 +69,22 @@ public class RabbitClientAnnotationProcessorImplTest {
 
         String sendAndReceive = ReflectionUtils.methodNameSignatureAware(CorrectClient.class.getMethod("sendAndReceive", String.class));
         RabbitClientMetadata sendAndReceiveMetadata = metadataByMethod.get(sendAndReceive);
-        assertEquals(METHOD_LEVEL_EXCHANGE, sendAndReceiveMetadata.getExchange());
-        assertEquals(METHOD_LEVEL_QUEUE, sendAndReceiveMetadata.getRoutingKey());
+        assertEquals(METHOD_LEVEL_EXCHANGE, sendAndReceiveMetadata.getExchangeGenerator().generate(null, null, null));
+        assertEquals(METHOD_LEVEL_QUEUE, sendAndReceiveMetadata.getRoutingKeyGenerator().generate(null, null, null));
         assertEquals(IDENTITY_MESSAGE_POST_PROCESSOR, sendAndReceiveMetadata.getMessagePostProcessor());
         assertEquals("test", sendAndReceiveMetadata.getPayload(new Object[]{"test"}));
 
         String sendAndReceivePayloadAnnotation = ReflectionUtils.methodNameSignatureAware(CorrectClient.class.getMethod("sendAndReceivePayloadAnnotation", String.class));
         RabbitClientMetadata sendAndReceivePayloadAnnotationMetadata = metadataByMethod.get(sendAndReceivePayloadAnnotation);
-        assertEquals(DEFAULT_EXCHANGE, sendAndReceivePayloadAnnotationMetadata.getExchange());
-        assertEquals(METHOD_LEVEL_QUEUE, sendAndReceivePayloadAnnotationMetadata.getRoutingKey());
+        assertEquals(DEFAULT_EXCHANGE, sendAndReceivePayloadAnnotationMetadata.getExchangeGenerator().generate(null, null, null));
+        assertEquals(METHOD_LEVEL_QUEUE, sendAndReceivePayloadAnnotationMetadata.getRoutingKeyGenerator().generate(null, null, null));
         assertNotEquals(IDENTITY_MESSAGE_POST_PROCESSOR, sendAndReceivePayloadAnnotationMetadata.getMessagePostProcessor());
         assertEquals("test", sendAndReceivePayloadAnnotationMetadata.getPayload(new Object[]{"test"}));
 
         String sendAndReceiveWithHeader = ReflectionUtils.methodNameSignatureAware(CorrectClient.class.getMethod("sendAndReceiveWithHeader", String.class, String.class));
         RabbitClientMetadata sendAndReceiveWithHeaderMetadata = metadataByMethod.get(sendAndReceiveWithHeader);
-        assertEquals(METHOD_LEVEL_EXCHANGE, sendAndReceiveWithHeaderMetadata.getExchange());
-        assertEquals(DEFAULT_QUEUE, sendAndReceiveWithHeaderMetadata.getRoutingKey());
+        assertEquals(METHOD_LEVEL_EXCHANGE, sendAndReceiveWithHeaderMetadata.getExchangeGenerator().generate(null, null, null));
+        assertEquals(DEFAULT_QUEUE, sendAndReceiveWithHeaderMetadata.getRoutingKeyGenerator().generate(null, null, null));
         assertNotEquals(IDENTITY_MESSAGE_POST_PROCESSOR, sendAndReceivePayloadAnnotationMetadata.getMessagePostProcessor());
         assertEquals("payload", sendAndReceiveWithHeaderMetadata.getPayload(new Object[]{"header", "payload"}));
         Map<String, Object> headers = sendAndReceiveWithHeaderMetadata.getHeaders(new Object[]{"header", "payload"});
@@ -89,8 +92,8 @@ public class RabbitClientAnnotationProcessorImplTest {
 
         String sendAsynch = ReflectionUtils.methodNameSignatureAware(CorrectClient.class.getMethod("sendAsynch", TestRequest.class));
         RabbitClientMetadata sendAsynchMetadata = metadataByMethod.get(sendAsynch);
-        assertEquals(DEFAULT_EXCHANGE, sendAsynchMetadata.getExchange());
-        assertEquals(DEFAULT_QUEUE, sendAsynchMetadata.getRoutingKey());
+        assertEquals(DEFAULT_EXCHANGE, sendAsynchMetadata.getExchangeGenerator().generate(null, null, null));
+        assertEquals(DEFAULT_QUEUE, sendAsynchMetadata.getRoutingKeyGenerator().generate(null, null, null));
         assertNotEquals(IDENTITY_MESSAGE_POST_PROCESSOR, sendAndReceivePayloadAnnotationMetadata.getMessagePostProcessor());
         TestRequest request = new TestRequest("test");
         assertEquals(request, sendAsynchMetadata.getPayload(new Object[]{request}));
