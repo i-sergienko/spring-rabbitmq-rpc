@@ -5,3 +5,5 @@ rpc-test:
     asynchronous: asynch
     custom-payload-and-header: custom_payload_and_header
     custom-payload-only: custom_payload_only
+    generated-routing-key: generated_routing_key
+    default-generated-routing-key: default_generated_routing_key

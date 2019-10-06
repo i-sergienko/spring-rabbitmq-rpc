@@ -59,4 +59,14 @@ public class TestListener {
         assertEquals(TEST_HEADER_VALUE, header);
         return new TestResponse(payload.getData());
     }
+
+    @RabbitListener(queues = "${rpc-test.queue.generated-routing-key}")
+    public String generatedRoutingKey(@Payload String payload) {
+        return payload;
+    }
+
+    @RabbitListener(queues = "${rpc-test.queue.default-generated-routing-key}")
+    public String defaultGeneratedRoutingKey(@Payload String payload) {
+        return payload;
+    }
 }

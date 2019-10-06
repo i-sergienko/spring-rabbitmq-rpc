@@ -18,6 +18,7 @@ package org.bakeneko.rpc.test;
 
 import com.rabbitmq.client.Channel;
 import org.bakeneko.rabbitmq.rpc.EnableRabbitRPC;
+import org.bakeneko.rabbitmq.rpc.generator.RoutingKeyGenerator;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
@@ -26,6 +27,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.test.TestRabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
@@ -85,4 +87,13 @@ public class TestConfiguration {
         return factory;
     }
 
+    @Bean
+    public RoutingKeyGenerator customRoutingKeyGenerator(@Value("${rpc-test.queue.generated-routing-key}") String routingKey) {
+        return (target, method, params) -> routingKey;
+    }
+
+    @Bean
+    public RoutingKeyGenerator defaultRoutingKeyGenerator(@Value("${rpc-test.queue.default-generated-routing-key}") String routingKey) {
+        return (target, method, params) -> routingKey;
+    }
 }

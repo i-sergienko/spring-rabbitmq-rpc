@@ -18,6 +18,7 @@ package org.bakeneko.rpc.test;
 
 import org.bakeneko.rpc.test.model.TestRequest;
 import org.bakeneko.rpc.test.model.TestResponse;
+import org.bakeneko.rpc.test.service.GeneratorTestingClient;
 import org.bakeneko.rpc.test.service.TestClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +37,8 @@ import static org.junit.Assert.assertEquals;
 public class GeneratedClientTest {
     @Autowired
     private TestClient client;
+    @Autowired
+    private GeneratorTestingClient generatorTestingClient;
 
     @Test
     public void payloadOnlyListenerReturnsRequestValue() {
@@ -70,5 +73,17 @@ public class GeneratedClientTest {
     public void sendWithHeaderAndReceiveCustomModel() {
         TestResponse response = client.sendWithHeaderAndReceiveCustomModel(new TestRequest("test"), TEST_HEADER_VALUE);
         assertEquals(new TestResponse("test"), response);
+    }
+
+    @Test
+    public void sendWithGeneratedRoutingKey() {
+        String response = generatorTestingClient.sendWithGeneratedRoutingKey("test");
+        assertEquals("test", response);
+    }
+
+    @Test
+    public void sendWithDefaultGeneratedRoutingKey() {
+        String response = generatorTestingClient.sendWithDefaultGeneratedRoutingKey("test");
+        assertEquals("test", response);
     }
 }

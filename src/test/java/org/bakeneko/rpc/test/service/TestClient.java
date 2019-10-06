@@ -23,7 +23,7 @@ import org.bakeneko.rpc.test.model.TestResponse;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 
-import static org.bakeneko.rpc.test.TestConfiguration.*;
+import static org.bakeneko.rpc.test.TestConfiguration.TEST_HEADER_NAME;
 
 /**
  * @author Ivan Sergienko
