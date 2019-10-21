@@ -46,6 +46,7 @@ public @interface RabbitClient {
      * The bean name of the custom {@link org.bakeneko.rabbitmq.rpc.generator.ExchangeGenerator} to use.
      * <p>Mutually exclusive with the {@link #exchange} attribute.
      *
+     * @return a {@link org.bakeneko.rabbitmq.rpc.generator.ExchangeGenerator} bean to use for sending messages.
      * @see RabbitSender#exchangeGenerator
      */
     String exchangeGenerator() default "";
@@ -63,6 +64,7 @@ public @interface RabbitClient {
      * The bean name of the custom {@link org.bakeneko.rabbitmq.rpc.generator.RoutingKeyGenerator} to use.
      * <p>Mutually exclusive with the {@link #routingKey} attribute.
      *
+     * @return the name of the {@link org.bakeneko.rabbitmq.rpc.generator.RoutingKeyGenerator} bean to use for sending messages.
      * @see RabbitSender#routingKeyGenerator
      */
     String routingKeyGenerator() default "";
